@@ -27,7 +27,7 @@ static const struct gpio_dt_spec led_1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
 
 void liga_led_verde(void *arg1, void *arg2,void *arg3){
 	while(1){
-	printk("thread liga_led_verde rodando!\n");
+	//printk("thread liga_led_verde rodando!\n");
 	gpio_pin_toggle_dt(&led);
 	k_msleep(950);
 	}
@@ -35,7 +35,7 @@ void liga_led_verde(void *arg1, void *arg2,void *arg3){
 
 void liga_led_azul(void *arg1, void *arg2,void *arg3){
 	while(1){
-	printk("thread liga_led_azul rodando!\n");
+	//printk("thread liga_led_azul rodando!\n");
 	gpio_pin_toggle_dt(&led_1);
     k_msleep(350);}
 }
@@ -95,7 +95,7 @@ int ret,ret2;
 		k_msleep(SLEEP_TIME_MS);
 		gpio_pin_set_dt(&led,0); // desliga ambos os pinos dos leds
 		gpio_pin_set_dt(&led_1,0);
-	    printk("leds desligados!\n");
+	    //printk("leds desligados!\n");
 		}
 		// teste do led
 		//printk("\n");
