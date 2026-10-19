@@ -3,6 +3,8 @@
 #include <zephyr/drivers/gpio.h>
 
 #define SLEEP_TIME_MS 50
+#define STACK_SIZE 1024
+#define PRIORITY 0
 
 
 // Define o LED usando Device Tree
@@ -23,10 +25,27 @@ static const struct gpio_dt_spec led_1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
 #error "Unsupported board: led0 devicetree alias is not defined"
 #endif
 
+void liga_led_verde(void *arg1, void *arg2,void *arg3){
+	while(1){
+	printk("thread liga_led_verde rodando!\n");
+	gpio_pin_toggle_dt(&led);
+	k_msleep(950);
+	}
+}
+
+void liga_led_azul(void *arg1, void *arg2,void *arg3){
+	while(1){
+	printk("thread liga_led_azul rodando!\n");
+	gpio_pin_toggle_dt(&led_1);
+    k_msleep(350);}
+}
+
+K_THREAD_DEFINE(thread_led_verde,STACK_SIZE,liga_led_verde,NULL,NULL,NULL,PRIORITY,0,0);
+K_THREAD_DEFINE(thread_led_azul,STACK_SIZE,liga_led_azul,NULL,NULL,NULL,PRIORITY,0,0);
 
 void main(void)
 {
-int ret,ret2, i=0;
+int ret,ret2;
 
     // Verifica se o device está pronto
     if (!gpio_is_ready_dt(&led)) {
@@ -55,7 +74,7 @@ int ret,ret2, i=0;
 
     printk("LED blinking on %s pin %d\n", led.port->name, led.pin);
 	printk("LED blinking on %s pin %d\n", led_1.port->name, led_1.pin);
-    while (1) {
+    
         //pisca o led azul à cada 500ms, pisca o led azul à cada segundo
 		// Toggle do LED usando a nova API
 		/*
@@ -72,28 +91,13 @@ int ret,ret2, i=0;
 		*/
 		
 		//criando um que pisca o led verde à cada 350 ms e o azul à cada 1000 ms
-
+		while(1){
 		k_msleep(SLEEP_TIME_MS);
 		gpio_pin_set_dt(&led,0); // desliga ambos os pinos dos leds
 		gpio_pin_set_dt(&led_1,0);
-		i++;
-		if(i%7==0)
-		{
-		gpio_pin_toggle_dt(&led);
-		// teste do led
-		//printk("LED verde ligado em %d ", 50*i);
-		}
-		if(i%20 == 0)
-		{
-		gpio_pin_toggle_dt(&led_1);
-		// teste do led
-		//printk("LED azul ligado em %d", 50*i);
-		}
-		if(i==140)
-		{
-			i=0;
+	    printk("leds desligados!\n");
 		}
 		// teste do led
 		//printk("\n");
-    }
+    
 }
